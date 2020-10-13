@@ -1,22 +1,25 @@
-#include<stdio.h>
-#include<math.h> // This C library adds the 'pow' function
+#include <stdio.h>
+#include <math.h> // This C library adds the 'pow' function
 
-int main()
-{
-// c = log a b, where a^c = b;
-int a,b;
-float c, n, num;
-float i=0;
-printf("Enter the base and argument ");
-scanf("%d %d", &a, &b); // The user inputs the base and argument of a logarithmic function
-do // In this demonstration we basically test every exponent until we reach the value defined by int b
-{
-i++; // We add one to i
-c=i/1000; // We divide i by 1000, so effectively we're adding 0.01 every time we run the do function
-n=pow(a,c); // We raise a to the power of c
-num = floor(10000*n)/10000; // We round the result
+const int PRECISION = 1000;
+
+double ln(double argument) {
+	// according to https://en.wikipedia.org/wiki/Natural_logarithm#Series
+
+	double answer = 0;
+	for (double i = 0; i <= PRECISION; i++) {
+		answer += 1.0 / (2.0 * i + 1.0) * pow(pow(argument - 1.0, 2.0)/pow(argument + 1.0, 2.0), i);
+	}
+	answer = answer * 2.0 * (argument - 1.0) / (argument + 1.0);
+	return answer;
 }
-while(b>num); // Finally, we check if our result is equal to int b
-printf("%.3lf", c); // If it is, the program prints the result. If not, the do function runs again
-return 0;
+
+int main() {
+	double base, argument;
+	printf("Enter the base and argument ");
+	scanf("%lf %lf", &base, &argument);
+
+	// (ln argument)/(ln base) = logbase argument
+	printf("%.10f\n", ln(argument)/ln(base));
+	return 0;
 }
